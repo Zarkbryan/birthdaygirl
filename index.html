@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Birthday Mpenzi 🌸</title>
+<title>Happy Birthday Kendi 🌸</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Bodoni+Moda:ital,wght@0,400;1,400&family=DM+Mono:wght@300;400&display=swap');
 
@@ -53,6 +53,8 @@
     opacity: 0;
     transition: opacity 1.2s ease;
   }
+  /* Fallback if JS delays */
+  #countdown-view.visible { opacity: 1 !important; }
 
   #countdown-view.visible { opacity: 1; }
 
@@ -281,20 +283,136 @@
     z-index: 6;
     display: none;
   }
+
+  /* TAP TO ENTER SCREEN */
+  #tap-screen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #1a0a12;
+    cursor: pointer;
+    transition: opacity 1.5s ease;
+  }
+
+  #tap-screen.hiding {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .tap-petal-ring {
+    position: absolute;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    border: 1px solid rgba(232,160,180,0.2);
+    animation: ringPulse 2.5s ease infinite;
+  }
+  .tap-petal-ring:nth-child(2) {
+    width: 300px; height: 300px;
+    animation-delay: 0.5s;
+    border-color: rgba(212,168,87,0.15);
+  }
+  .tap-petal-ring:nth-child(3) {
+    width: 380px; height: 380px;
+    animation-delay: 1s;
+    border-color: rgba(232,160,180,0.08);
+  }
+
+  @keyframes ringPulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.06); opacity: 0.5; }
+  }
+
+  .tap-icon {
+    font-size: 52px;
+    margin-bottom: 24px;
+    animation: iconFloat 2s ease infinite;
+  }
+
+  @keyframes iconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .tap-title {
+    font-family: 'Bodoni Moda', serif;
+    font-style: italic;
+    font-size: clamp(22px, 5vw, 42px);
+    color: #fdf5f0;
+    letter-spacing: 0.06em;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .tap-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(13px, 2vw, 17px);
+    color: #e8a0b4;
+    opacity: 0.7;
+    letter-spacing: 0.15em;
+    margin-bottom: 48px;
+    text-align: center;
+  }
+
+  .tap-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(10px, 1.5vw, 13px);
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: #1a0a12;
+    background: linear-gradient(135deg, #e8a0b4, #d4a857);
+    border: none;
+    padding: 16px 40px;
+    border-radius: 40px;
+    cursor: pointer;
+    animation: btnGlow 2s ease infinite;
+    pointer-events: all;
+  }
+
+  @keyframes btnGlow {
+    0%, 100% { box-shadow: 0 0 20px rgba(232,160,180,0.4); }
+    50% { box-shadow: 0 0 40px rgba(212,168,87,0.6); }
+  }
 </style>
 </head>
 <body>
 
+
+<div id="tap-screen">
+  <div class="tap-petal-ring"></div>
+  <div class="tap-petal-ring"></div>
+  <div class="tap-petal-ring"></div>
+  <div class="tap-icon">🌸</div>
+  <div class="tap-title">Something Special<br>awaits you</div>
+  <div class="tap-sub">tap to begin</div>
+  <button class="tap-btn" onclick="enterSite()">Open ✦</button>
+</div>
+
 <canvas id="canvas"></canvas>
 <div id="particles-css"></div>
 <canvas id="confetti-canvas"></canvas>
+<!-- AUDIO -->
+<audio id="audio-countdown" loop preload="auto">
+  <source src="audio/countdown.mp3" type="audio/mpeg">
+  <source src="audio/countdown.m4a" type="audio/mp4">
+</audio>
+<audio id="audio-birthday" loop preload="auto">
+  <source src="audio/birthday.mp3" type="audio/mpeg">
+  <source src="audio/birthday.m4a" type="audio/mp4">
+</audio>
+
 
 <div id="ui">
   <!-- COUNTDOWN -->
   <div id="countdown-view">
     <div class="top-label">counting down to her day</div>
     <div class="main-title">Something Beautiful<br>is Coming</div>
-    <div class="subtitle">Mpenzi's Birthday — May 25th, 2026</div>
+    <div class="subtitle">Kendi Triphosa Mutwiri — May 25th, 2026</div>
     <div class="clock-row">
       <div class="clock-unit">
         <div class="clock-num" id="days">00</div>
@@ -316,29 +434,120 @@
         <div class="clock-label">Seconds</div>
       </div>
     </div>
-    <div class="bottom-love">"Love you more" — always, and in every moment.</div>
+    <div class="bottom-love">Kendi — you are my favourite person in every moment.</div>
   </div>
 
   <!-- BIRTHDAY -->
   <div id="birthday-view">
     <div class="bday-top">✦ May 25th, 2026 ✦</div>
     <div class="bday-title">Happy Birthday</div>
-    <div class="bday-name">Mpenzi Wangu</div>
+    <div class="bday-name">Kendi Triphosa Mutwiri</div>
     <div class="divider"></div>
     <div class="bday-message">
-      You make me feel whole and loved.<br>
-      Today the world gets to celebrate the person<br>
-      who has my whole heart — that is you.<br><br>
-      Nakupenda zaidi ya maneno.<br>
-      You are my baby, forever and always.
+      There are people you meet in life who simply exist,<br>
+      and then there is you — who made me feel<br>
+      like existing means something.<br><br>
+      Kendi, you make me feel whole in ways<br>
+      I never knew I was missing. The way you say<br>
+      <em>"love you more"</em> — I have spent every day<br>
+      trying to prove that I do.<br><br>
+      I love you not because it is easy,<br>
+      but because choosing you is the one thing<br>
+      I would choose again, every single time.<br><br>
+      Nakupenda zaidi ya maneno, mpenzi wangu.<br>
+      More than words. More than I can say.<br>
+      More — always more.
     </div>
-    <div class="bday-sign">— always yours, with love 🌸</div>
+    <div class="bday-sign">— forever yours, with my whole heart 🌸</div>
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+// ─── AUDIO ENGINE ─────────────────────────────────────────────────
+const audioCountdown = document.getElementById('audio-countdown');
+const audioBirthday  = document.getElementById('audio-birthday');
+
+audioCountdown.volume = 0;
+audioBirthday.volume  = 0;
+
+function fadeInAudio(el, duration) {
+  el.play().catch(() => {});
+  const steps = 60;
+  const stepTime = duration / steps;
+  const target = 0.45;
+  let step = 0;
+  const iv = setInterval(() => {
+    step++;
+    el.volume = Math.min(target, (step / steps) * target);
+    if (step >= steps) clearInterval(iv);
+  }, stepTime);
+}
+
+function fadeOutAudio(el, duration) {
+  const steps = 60;
+  const stepTime = duration / steps;
+  const startVol = el.volume;
+  let step = 0;
+  const iv = setInterval(() => {
+    step++;
+    el.volume = Math.max(0, startVol - (step / steps) * startVol);
+    if (step >= steps) { el.pause(); clearInterval(iv); }
+  }, stepTime);
+}
+
+// Autoplay: start on first any user interaction (mousemove, touch, scroll, click)
+let audioStarted = false;
+function startAudio() {
+  if (audioStarted) return;
+  audioStarted = true;
+  const diff = BIRTHDAY - Date.now();
+  if (diff > 0) {
+    fadeInAudio(audioCountdown, 2500);
+  } else {
+    fadeInAudio(audioBirthday, 2500);
+  }
+}
+
+['mousemove','touchstart','touchmove','scroll','keydown','click'].forEach(evt => {
+  window.addEventListener(evt, startAudio, { once: false, passive: true });
+});
+
+// Also try immediate autoplay (works on some browsers)
+setTimeout(() => {
+  audioCountdown.muted = true;
+  audioCountdown.play().then(() => {
+    audioCountdown.muted = false;
+    fadeInAudio(audioCountdown, 2500);
+    audioStarted = true;
+  }).catch(() => {
+    // Will start on interaction instead
+  });
+}, 800);
+
+
+// ─── TAP TO ENTER ─────────────────────────────────────────────────
+function enterSite() {
+  const tapScreen = document.getElementById('tap-screen');
+  tapScreen.classList.add('hiding');
+
+  // Start audio immediately on user gesture
+  audioStarted = true;
+  const diff = BIRTHDAY - Date.now();
+  if (diff > 0) {
+    fadeInAudio(audioCountdown, 2500);
+  } else {
+    fadeInAudio(audioBirthday, 2500);
+  }
+
+  setTimeout(() => {
+    tapScreen.style.display = 'none';
+  }, 1600);
+}
+
+</script>
 <script>
 // ─── THREE.JS SCENE ───────────────────────────────────────────────
+try {
 const canvas = document.getElementById('canvas');
 const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -520,143 +729,5 @@ window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
 });
-
-// ─── FIREFLIES CSS ─────────────────────────────────────────────────
-const particlesEl = document.getElementById('particles-css');
-for (let i = 0; i < 28; i++) {
-  const ff = document.createElement('div');
-  ff.className = 'firefly';
-  ff.style.left = Math.random() * 100 + 'vw';
-  ff.style.animationDuration = (12 + Math.random() * 16) + 's';
-  ff.style.animationDelay = (Math.random() * 14) + 's';
-  ff.style.setProperty('--drift', ((Math.random() - 0.5) * 200) + 'px');
-  ff.style.width = ff.style.height = (2 + Math.random() * 3) + 'px';
-  const hue = Math.random() > 0.5 ? 'var(--rose)' : 'var(--gold)';
-  ff.style.background = hue;
-  particlesEl.appendChild(ff);
-}
-
-// ─── COUNTDOWN ────────────────────────────────────────────────────
-const BIRTHDAY = new Date('2026-05-25T00:00:00').getTime();
-const daysEl = document.getElementById('days');
-const hoursEl = document.getElementById('hours');
-const minsEl = document.getElementById('minutes');
-const secsEl = document.getElementById('seconds');
-const countdownView = document.getElementById('countdown-view');
-const birthdayView = document.getElementById('birthday-view');
-
-function pad(n) { return String(Math.max(0, n)).padStart(2, '0'); }
-
-function triggerBirthday() {
-  isBirthday = true;
-  countdownView.style.opacity = '0';
-  setTimeout(() => {
-    countdownView.style.display = 'none';
-    birthdayView.style.display = 'flex';
-    // Force reflow
-    birthdayView.offsetHeight;
-    birthdayView.classList.add('visible');
-    startConfetti();
-  }, 1200);
-}
-
-function tick() {
-  const now = Date.now();
-  const diff = BIRTHDAY - now;
-
-  if (diff <= 0) {
-    triggerBirthday();
-    return;
-  }
-
-  const d = Math.floor(diff / 86400000);
-  const h = Math.floor((diff % 86400000) / 3600000);
-  const m = Math.floor((diff % 3600000) / 60000);
-  const s = Math.floor((diff % 60000) / 1000);
-
-  function setVal(el, val) {
-    const padded = pad(val);
-    if (el.textContent !== padded) {
-      el.textContent = padded;
-      el.classList.remove('tick');
-      void el.offsetWidth;
-      el.classList.add('tick');
-      setTimeout(() => el.classList.remove('tick'), 180);
-    }
-  }
-
-  setVal(daysEl, d);
-  setVal(hoursEl, h);
-  setVal(minsEl, m);
-  setVal(secsEl, s);
-
-  setTimeout(tick, 1000);
-}
-
-// Show UI
-setTimeout(() => {
-  const diff = BIRTHDAY - Date.now();
-  if (diff <= 0) {
-    birthdayView.style.display = 'flex';
-    setTimeout(() => { isBirthday = true; birthdayView.classList.add('visible'); startConfetti(); }, 100);
-  } else {
-    countdownView.classList.add('visible');
-    tick();
-  }
-}, 400);
-
-// ─── CONFETTI ─────────────────────────────────────────────────────
-const confettiCanvas = document.getElementById('confetti-canvas');
-const ctx = confettiCanvas.getContext('2d');
-confettiCanvas.width = window.innerWidth;
-confettiCanvas.height = window.innerHeight;
-let confettiPieces = [];
-let confettiRunning = false;
-
-function startConfetti() {
-  confettiCanvas.style.display = 'block';
-  confettiRunning = true;
-  for (let i = 0; i < 160; i++) {
-    confettiPieces.push({
-      x: Math.random() * confettiCanvas.width,
-      y: Math.random() * confettiCanvas.height - confettiCanvas.height,
-      w: Math.random() * 10 + 4,
-      h: Math.random() * 6 + 3,
-      color: ['#e8a0b4','#f5c6d8','#d4a857','#fdf5f0','#c97dab'][Math.floor(Math.random()*5)],
-      speed: Math.random() * 3 + 1.5,
-      drift: (Math.random() - 0.5) * 2,
-      rot: Math.random() * Math.PI * 2,
-      rotSpeed: (Math.random() - 0.5) * 0.12,
-      opacity: Math.random() * 0.7 + 0.3,
-    });
-  }
-  animateConfetti();
-  // Stop adding new ones after 8s, let them fall off
-  setTimeout(() => confettiRunning = false, 8000);
-}
-
-function animateConfetti() {
-  ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-  confettiPieces = confettiPieces.filter(p => p.y < confettiCanvas.height + 30);
-  confettiPieces.forEach(p => {
-    p.y += p.speed;
-    p.x += p.drift;
-    p.rot += p.rotSpeed;
-    ctx.save();
-    ctx.globalAlpha = p.opacity;
-    ctx.translate(p.x, p.y);
-    ctx.rotate(p.rot);
-    ctx.fillStyle = p.color;
-    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-    ctx.restore();
-  });
-  if (confettiPieces.length > 0) requestAnimationFrame(animateConfetti);
-}
-
-window.addEventListener('resize', () => {
-  confettiCanvas.width = window.innerWidth;
-  confettiCanvas.height = window.innerHeight;
-});
-</script>
-</body>
-</html>
+} catch(e) {
+  // Three.js failed silently - page still

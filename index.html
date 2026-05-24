@@ -288,6 +288,14 @@
 <canvas id="canvas"></canvas>
 <div id="particles-css"></div>
 <canvas id="confetti-canvas"></canvas>
+<!-- AUDIO -->
+<audio id="audio-countdown" loop preload="auto">
+  <source src="audio/countdown.mp3" type="audio/mpeg">
+</audio>
+<audio id="audio-birthday" loop preload="auto">
+  <source src="audio/birthday.mp3" type="audio/mpeg">
+</audio>
+
 
 <div id="ui">
   <!-- COUNTDOWN -->
@@ -344,7 +352,69 @@
   </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+// ─── AUDIO ENGINE ─────────────────────────────────────────────────
+const audioCountdown = document.getElementById('audio-countdown');
+const audioBirthday  = document.getElementById('audio-birthday');
+
+audioCountdown.volume = 0;
+audioBirthday.volume  = 0;
+
+function fadeInAudio(el, duration) {
+  el.play().catch(() => {});
+  const steps = 60;
+  const stepTime = duration / steps;
+  const target = 0.45;
+  let step = 0;
+  const iv = setInterval(() => {
+    step++;
+    el.volume = Math.min(target, (step / steps) * target);
+    if (step >= steps) clearInterval(iv);
+  }, stepTime);
+}
+
+function fadeOutAudio(el, duration) {
+  const steps = 60;
+  const stepTime = duration / steps;
+  const startVol = el.volume;
+  let step = 0;
+  const iv = setInterval(() => {
+    step++;
+    el.volume = Math.max(0, startVol - (step / steps) * startVol);
+    if (step >= steps) { el.pause(); clearInterval(iv); }
+  }, stepTime);
+}
+
+// Autoplay: start on first any user interaction (mousemove, touch, scroll, click)
+let audioStarted = false;
+function startAudio() {
+  if (audioStarted) return;
+  audioStarted = true;
+  const diff = BIRTHDAY - Date.now();
+  if (diff > 0) {
+    fadeInAudio(audioCountdown, 2500);
+  } else {
+    fadeInAudio(audioBirthday, 2500);
+  }
+}
+
+['mousemove','touchstart','touchmove','scroll','keydown','click'].forEach(evt => {
+  window.addEventListener(evt, startAudio, { once: false, passive: true });
+});
+
+// Also try immediate autoplay (works on some browsers)
+setTimeout(() => {
+  audioCountdown.muted = true;
+  audioCountdown.play().then(() => {
+    audioCountdown.muted = false;
+    fadeInAudio(audioCountdown, 2500);
+    audioStarted = true;
+  }).catch(() => {
+    // Will start on interaction instead
+  });
+}, 800);
+
+</script>
 <script>
 // ─── THREE.JS SCENE ───────────────────────────────────────────────
 const canvas = document.getElementById('canvas');
@@ -558,13 +628,15 @@ function pad(n) { return String(Math.max(0, n)).padStart(2, '0'); }
 function triggerBirthday() {
   isBirthday = true;
   countdownView.style.opacity = '0';
+  // Crossfade audio
+  fadeOutAudio(audioCountdown, 1200);
   setTimeout(() => {
     countdownView.style.display = 'none';
     birthdayView.style.display = 'flex';
-    // Force reflow
     birthdayView.offsetHeight;
     birthdayView.classList.add('visible');
     startConfetti();
+    fadeInAudio(audioBirthday, 2000);
   }, 1200);
 }
 
@@ -629,42 +701,4 @@ function startConfetti() {
       x: Math.random() * confettiCanvas.width,
       y: Math.random() * confettiCanvas.height - confettiCanvas.height,
       w: Math.random() * 10 + 4,
-      h: Math.random() * 6 + 3,
-      color: ['#e8a0b4','#f5c6d8','#d4a857','#fdf5f0','#c97dab'][Math.floor(Math.random()*5)],
-      speed: Math.random() * 3 + 1.5,
-      drift: (Math.random() - 0.5) * 2,
-      rot: Math.random() * Math.PI * 2,
-      rotSpeed: (Math.random() - 0.5) * 0.12,
-      opacity: Math.random() * 0.7 + 0.3,
-    });
-  }
-  animateConfetti();
-  // Stop adding new ones after 8s, let them fall off
-  setTimeout(() => confettiRunning = false, 8000);
-}
-
-function animateConfetti() {
-  ctx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
-  confettiPieces = confettiPieces.filter(p => p.y < confettiCanvas.height + 30);
-  confettiPieces.forEach(p => {
-    p.y += p.speed;
-    p.x += p.drift;
-    p.rot += p.rotSpeed;
-    ctx.save();
-    ctx.globalAlpha = p.opacity;
-    ctx.translate(p.x, p.y);
-    ctx.rotate(p.rot);
-    ctx.fillStyle = p.color;
-    ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
-    ctx.restore();
-  });
-  if (confettiPieces.length > 0) requestAnimationFrame(animateConfetti);
-}
-
-window.addEventListener('resize', () => {
-  confettiCanvas.width = window.innerWidth;
-  confettiCanvas.height = window.innerHeight;
-});
-</script>
-</body>
-</html>
+      h: M

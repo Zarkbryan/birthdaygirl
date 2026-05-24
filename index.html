@@ -291,9 +291,11 @@
 <!-- AUDIO -->
 <audio id="audio-countdown" loop preload="auto">
   <source src="audio/countdown.mp3" type="audio/mpeg">
+  <source src="audio/countdown.m4a" type="audio/mp4">
 </audio>
 <audio id="audio-birthday" loop preload="auto">
   <source src="audio/birthday.mp3" type="audio/mpeg">
+  <source src="audio/birthday.m4a" type="audio/mp4">
 </audio>
 
 
@@ -699,6 +701,4 @@ function startConfetti() {
   for (let i = 0; i < 160; i++) {
     confettiPieces.push({
       x: Math.random() * confettiCanvas.width,
-      y: Math.random() * confettiCanvas.height - confettiCanvas.height,
-      w: Math.random() * 10 + 4,
-      h: M
+      y:
